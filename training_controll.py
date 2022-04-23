@@ -77,8 +77,10 @@ except:
 subprocess.run([r"softalk\SofTalk.exe",  #念のため一回 softalk を立ち上げ
               "/X:1"])              
 interval_elem = xls_table.query('name=="interval"')
+interval_seconds = 0
 if len(interval_elem) > 0:
     interval_elem = interval_elem.iloc[0]
+    interval_seconds = interval_elem["seconds"]
 
 almost_th = 0.8 #全体の何％が終わったところであと少しお知らせを行うか。鳴らしたくなければ 1 より大きくしておけばよい
 
@@ -118,7 +120,10 @@ def interval_time():
 
 #運動開始
 print("start procedure")
+total_time = sum(xls_table["repeat"] * xls_table["seconds"]) + ((len(xls_table)-1)*interval_seconds)
+read_text("うんどうじかんは、やく" + str(int(total_time/60)) + "ぷんです")
 time.sleep(5)
+
 repeat_num = max(xls_table["repeat"])
 print(repeat_num)
 for r in range(repeat_num):
