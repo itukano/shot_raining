@@ -80,12 +80,6 @@ interval_elem = xls_table.query('name=="interval"')
 if len(interval_elem) > 0:
     interval_elem = interval_elem.iloc[0]
 
-repeat_elem = xls_table.query('name=="repeat"')
-repeat_num = 1
-if len(repeat_elem) > 0:
-    repeat_elem = repeat_elem.iloc[0]
-    repeat_num = repeat_elem["seconds"]
-
 almost_th = 0.8 #全体の何％が終わったところであと少しお知らせを行うか。鳴らしたくなければ 1 より大きくしておけばよい
 
 #読み上げる文章を作る
@@ -100,8 +94,8 @@ def read_text(text):
     t = len(text) / 4.0 #テキストの長さに合わせて適度に待つ。マジックナンバーは調整値
     time.sleep(t)
 
-#ワンセット
-def one_set(elem):
+#筋トレの一項目の処理
+def one_item(elem):
     set_time = elem["seconds"]
     als_flg = True #「もう少し」サウンドを鳴らしてよいかフラグ 
     for t in range(set_time):
@@ -125,17 +119,20 @@ def interval_time():
 #運動開始
 print("start procedure")
 time.sleep(5)
+repeat_num = max(xls_table["repeat"])
+print(repeat_num)
 for r in range(repeat_num):
+    read_text("だい"+str(r+1)+"せっと。")
     for i in range(len(xls_table)):
         print("process: ", i+1, "/", len(xls_table))
         elem = xls_table.loc[i]
-        if (elem["name"] != "interval") and (elem["name"] != "repeat"):
+        if (elem["name"] != "interval") and (r < elem["repeat"]):
             print(elem["name"])
-            one_set(elem)
+            one_item(elem)
 
             if (r == repeat_num-1) and (i != len(xls_table)-1):
                 interval_time()
 
-read_text("とれーにんぐ。終了です。")
+read_text("とれーにんぐ。しゅうりょうです。")
 
 
