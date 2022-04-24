@@ -16,6 +16,18 @@ https://sozorablog.com/beep/
 
 python から外部プロセスの立ち上げ
 https://boukenki.info/python-gaibu-program-process-application-kidou-jikkou-houhou/#Pythonrun
+https://docs.python.org/ja/3/library/subprocess.html
+
+subprocess.run([], shell=True) だと音が出ない問題
+https://stackoverflow.com/questions/24908050/capture-output-of-popen-when-shell-true
+
+subprocess.run([r"softalk\SofTalk.exe", "/W:" + text]) #一度手動でPowershellとかで exe を起動しておかないとハングアップする。
+subprocess.run([r"softalk\SofTalk.exe", "/W:" + text], shell=True) #動作するが音が出ない。
+subprocess.Popen([r"softalk\SofTalk.exe", "/X:1 /W:" + text]) #動作するし音も出る。
+
+subprocess の終了を待つなど
+https://takuya-1st.hatenablog.jp/entry/2016/04/11/044313
+process.wait() を使うといいと思ったが、開きっぱなしで死なないので、sleepで待って terminate という原始的なやり方をとる。
 
 '''
 
@@ -74,8 +86,6 @@ except:
     sys.exit()
 
 #運動の設定
-subprocess.run([r"softalk\SofTalk.exe",  #念のため一回 softalk を立ち上げ
-              "/X:1"])              
 interval_elem = xls_table.query('name=="interval"')
 interval_seconds = 0
 if len(interval_elem) > 0:
@@ -91,10 +101,10 @@ def create_elem_text(elem):
 #テキストを読み上げる
 def read_text(text):
     print(text)
-    subprocess.run([r"softalk\SofTalk.exe", 
-              "/W:" + text])
-    t = len(text) / 4.0 #テキストの長さに合わせて適度に待つ。マジックナンバーは調整値
-    time.sleep(t)
+    talk_process=subprocess.Popen([r"softalk\SofTalk.exe", "/X:1 /W:" + text])
+    wait_time = len(text) / 3.5 #テキストの長さに合わせて適度に待つ。マジックナンバーは調整値
+    time.sleep(wait_time)
+    talk_process.terminate()
 
 #筋トレの一項目の処理
 def one_item(elem):
