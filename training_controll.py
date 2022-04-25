@@ -54,8 +54,8 @@ def start_sound():
     time.sleep(0.3)
 #もう少しでセット終了の音
 def almost_sound():
-    for i in range(3):
-        for o in range(3):
+    for i in range(2):
+        for o in range(2):
             winsound.Beep(eight_sound_list[5], 100)
         time.sleep(0.3)
 #セット終了の音
@@ -138,14 +138,14 @@ repeat_num = max(xls_table["repeat"])
 print(repeat_num)
 for r in range(repeat_num):
     read_text("だい"+str(r+1)+"せっと。")
-    for i in range(len(xls_table)):
+    for i in range(2,len(xls_table)):
         print("process: ", i+1, "/", len(xls_table))
         elem = xls_table.loc[i]
         if (elem["name"] != "interval") and (r < elem["repeat"]):
             print(elem["name"])
             one_item(elem)
 
-            if (r == repeat_num-1) and (i != len(xls_table)-1):
+            if (r != repeat_num-1) or (i != len(xls_table)-1): #最後の最後はインターバル不要
                 interval_time()
 
 read_text("とれーにんぐ。しゅうりょうです。")
